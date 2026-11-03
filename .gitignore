@@ -1,0 +1,38 @@
+# --- OS / editors ---
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# --- Secrets: never commit real keys ---
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+appsettings.*.local.json
+
+# --- Xcode / Swift ---
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+.build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+.swiftpm/xcode/
+
+# --- .NET ---
+bin/
+obj/
+*.user
+*.suo
+TestResults/
+*.db
+*.db-shm
+*.db-wal
+
+# --- Node (if used by tooling) ---
+node_modules/

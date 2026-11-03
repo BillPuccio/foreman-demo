@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.pbxproj text eol=lf merge=union
+*.png binary
+*.jpg binary
+*.pdf binary
