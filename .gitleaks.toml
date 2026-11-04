@@ -1,0 +1,13 @@
+# gitleaks config for foreman-demo (BCW-11).
+# Uses gitleaks' built-in rules plus a rule for real Blue Collar Workflows domains.
+
+title = "foreman-demo"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "bcw-real-domain"
+description = "Real Blue Collar Workflows domain. This repo is demo-only."
+regex = '''(?i)[a-z0-9.-]*bluecollarworkflows\.(com|net|io|app|dev|co)'''
+keywords = ["bluecollarworkflows"]

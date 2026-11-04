@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Runs the demo guardrail check on staged changes before each commit.
+# Enable once per clone:  git config core.hooksPath .githooks
+exec "$(git rev-parse --show-toplevel)/scripts/check-demo-guardrails.sh" --staged
