@@ -1,5 +1,6 @@
 # Docs
 
+- [`domain-model.md`](domain-model.md): entities, fields and the quote lifecycle
 - [`demo-guardrails.md`](demo-guardrails.md): rules and checks that keep this repo demo-only
 - [`adr/`](adr/): architecture decision records, one file per decision (`NNNN-short-title.md`)
 

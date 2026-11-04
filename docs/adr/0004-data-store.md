@@ -17,7 +17,7 @@ Both the API and the MCP server need the data. The API owns writes and the appro
 - **The API owns the schema.** It applies migrations and seeds demo data (BCW-15) on startup in development.
 - **The approval gate is enforced in code, not only in the UI.**
   - The only way a quote becomes Approved is the API's approval endpoint, which requires a human user action (BCW-19).
-  - The shared library exposes a draft-only write path for the MCP server. It can create or update quotes in **Draft** status only, and has no method that approves or sends.
+  - The shared library exposes a draft-only write path for the MCP server. It can create quotes in **NeedsReview** status and edit them only while they're in **NeedsReview** or **Draft**. It has no method that approves, reopens or archives. See [the domain model](../domain-model.md#quote-lifecycle).
 - SQLite runs in WAL mode so the API and MCP server can read and write the same file safely at demo-level load. In docker compose, the database file lives on a shared volume.
 - The database file is git-ignored. Developers recreate it from migrations and seed data.
 
