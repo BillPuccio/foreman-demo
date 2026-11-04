@@ -62,3 +62,22 @@ Until a component's project exists, its workflow passes with a notice that it sk
 ## Project tracking
 
 Work is planned in epics: repo foundation, domain model, API, MCP server, Foreman assistant, iOS app, and showcase/docs.
+
+## Demo disclaimer
+
+Foreman Demo exists to show how an iOS app, a .NET API, an MCP server and an LLM fit together. It is not a product.
+
+- **Fictional data only.** Every customer, job, price and quote in this repo is made up. Any resemblance to real people or businesses is coincidental.
+- **Not connected to Blue Collar Workflows.** Nothing here talks to, or contains credentials for, any Blue Collar Workflows system.
+- **Not for real quotes.** Foreman's output comes from a language model and can be wrong. Don't use it to price real work.
+- **No warranty.** The software is provided as is, under the terms of the license below.
+
+## Contributing
+
+This is a single-developer portfolio project, so pull requests aren't being accepted right now. Issues are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the ground rules and the conventions the repo follows.
+
+## License
+
+The code is released under the [MIT License](LICENSE).
+
+The Blue Collar Workflows name, logo and branding are not covered by the license and may not be used to imply endorsement of a fork or derived work.
