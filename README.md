@@ -1,6 +1,6 @@
 # Foreman Demo
 
-> **Demonstration project.** This repository is a portfolio showcase. It uses fictional data, has no connection to any Blue Collar Workflows production system, and should not be used with real customer information.
+> **Demonstration project.** This repository is a portfolio showcase. It uses fictional data, has no connection to any Blue Collar Workflows production system, and should not be used with real customer information. See [demo guardrails](docs/demo-guardrails.md) for the rules and checks that keep it that way.
 
 Foreman is an AI assistant for small blue-collar service businesses. A job request comes in, Foreman drafts a quote using the business's price book, and the owner reviews and approves it before anything goes out. Foreman can draft; only a person can approve.
 
@@ -36,6 +36,14 @@ The approval gate lives in the API. The MCP server's write tools can only create
 Each folder is a self-contained project with its own README, build and tests, so any piece can be built and run on its own.
 
 ## Getting started
+
+Configuration comes from environment variables. Copy [`.env.example`](.env.example) to `.env` and fill in your own values. `.env` is git-ignored and must never be committed.
+
+Turn on the pre-commit guardrail check once per clone:
+
+```sh
+git config core.hooksPath .githooks
+```
 
 Setup instructions will be added as each component lands. The goal is a single command to run the API and MCP server locally with seeded demo data, plus an Xcode project that points at it.
 
