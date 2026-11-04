@@ -39,6 +39,18 @@ Each folder is a self-contained project with its own README, build and tests, so
 
 Setup instructions will be added as each component lands. The goal is a single command to run the API and MCP server locally with seeded demo data, plus an Xcode project that points at it.
 
+## Continuous integration
+
+Each component has its own GitHub Actions workflow in [`.github/workflows/`](.github/workflows/). Automatic runs are turned off for now, since this is a single-developer project. Each workflow can still be started by hand from the Actions tab, and its push and pull request triggers are left in the file, commented out, so they're easy to turn back on.
+
+| Workflow | Runner | What it does |
+| --- | --- | --- |
+| `api.yml` | Ubuntu | `dotnet restore`, build and test for `api/` |
+| `mcp-server.yml` | Ubuntu | `dotnet restore`, build and test for `mcp-server/` |
+| `ios.yml` | macOS | `xcodebuild test` on an iPhone simulator for `ios/` |
+
+Until a component's project exists, its workflow passes with a notice that it skipped the build.
+
 ## Project tracking
 
 Work is planned in epics: repo foundation, domain model, API, MCP server, Foreman assistant, iOS app, and showcase/docs.

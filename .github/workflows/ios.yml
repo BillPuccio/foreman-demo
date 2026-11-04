@@ -1,0 +1,86 @@
+name: iOS
+
+# Automatic runs are turned off. This workflow runs only when started by hand
+# from the Actions tab. To turn automatic runs back on, uncomment the push and
+# pull_request triggers below.
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "ios/**"
+  #     - ".github/workflows/ios.yml"
+  # pull_request:
+  #   paths:
+  #     - "ios/**"
+  #     - ".github/workflows/ios.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Update when the Xcode project lands (BCW-37) if the scheme name differs.
+  SCHEME: Foreman
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: macos-15
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect Xcode project
+        id: detect
+        run: |
+          workspace=$(find . -maxdepth 1 -name '*.xcworkspace' | head -n 1)
+          project=$(find . -maxdepth 1 -name '*.xcodeproj' | head -n 1)
+          if [ -n "$workspace" ]; then
+            echo "container=-workspace $workspace" >> "$GITHUB_OUTPUT"
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          elif [ -n "$project" ]; then
+            echo "container=-project $project" >> "$GITHUB_OUTPUT"
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No Xcode project in ios/ yet. Skipping build and test."
+          fi
+
+      - name: Show Xcode version
+        if: steps.detect.outputs.present == 'true'
+        run: xcodebuild -version
+
+      - name: Pick an iPhone simulator
+        if: steps.detect.outputs.present == 'true'
+        id: sim
+        run: |
+          udid=$(xcrun simctl list devices available -j \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next(x["udid"] for r,ds in sorted(d.items(), reverse=True) if "iOS" in r for x in ds if x["name"].startswith("iPhone")))')
+          echo "Using simulator $udid"
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+
+      - name: Build and test
+        if: steps.detect.outputs.present == 'true'
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            ${{ steps.detect.outputs.container }} \
+            -scheme "$SCHEME" \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}" \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload test results
+        if: always() && steps.detect.outputs.present == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-test-results
+          path: ios/TestResults.xcresult
+          if-no-files-found: ignore

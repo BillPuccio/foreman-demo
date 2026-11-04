@@ -1,0 +1,74 @@
+name: MCP server
+
+# Automatic runs are turned off. This workflow runs only when started by hand
+# from the Actions tab. To turn automatic runs back on, uncomment the push and
+# pull_request triggers below.
+on:
+  workflow_dispatch:
+  # When the shared data library from ADR-0004 lands, add its path here too.
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "mcp-server/**"
+  #     - ".github/workflows/mcp-server.yml"
+  # pull_request:
+  #   paths:
+  #     - "mcp-server/**"
+  #     - ".github/workflows/mcp-server.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: mcp-server
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect .NET solution
+        id: detect
+        run: |
+          if find . -maxdepth 1 \( -name '*.sln' -o -name '*.slnx' \) | grep -q .; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No solution in mcp-server/ yet. Skipping build and test."
+          fi
+
+      - uses: actions/setup-dotnet@v4
+        if: steps.detect.outputs.present == 'true'
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        if: steps.detect.outputs.present == 'true'
+        run: dotnet restore
+
+      - name: Build
+        if: steps.detect.outputs.present == 'true'
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        if: steps.detect.outputs.present == 'true'
+        run: dotnet test --no-build --configuration Release --logger "trx" --results-directory TestResults
+
+      - name: Upload test results
+        if: always() && steps.detect.outputs.present == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-server-test-results
+          path: mcp-server/TestResults
+          if-no-files-found: ignore
